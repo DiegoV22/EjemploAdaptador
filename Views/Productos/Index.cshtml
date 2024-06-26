@@ -1,0 +1,144 @@
+﻿@model IEnumerable<AdapterPatternDemo.Models.Producto>
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 100px 0 20px; /* Ajusta el margen superior según sea necesario */
+            color: #333;
+            text-shadow: 1px 1px #aaa;
+            text-align: center;
+        }
+
+        p a {
+            background-color: #d1e7dd;
+            color: #004d40;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            p a:hover {
+                background-color: #c8dfd6;
+                color: #002d26;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #d1e7dd;
+            color: #004d40;
+            text-shadow: 1px 1px #aaa;
+            border-bottom: 2px solid #004d40;
+        }
+
+        td {
+            background-color: #ffffff;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+        }
+
+        a {
+            color: #004d40;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+            a:hover {
+                color: #002d26;
+            }
+    </style>
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
+
+    <p>
+        <a asp-action="Crear">Crear nuevo</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Precio)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        <a asp-action="Editar" asp-route-id="@item.Id">Editar</a> |
+                        <a href="#" class="eliminar-producto" data-id="@item.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Script para manejar la eliminación de productos mediante AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.eliminar-producto').click(function (e) {
+                e.preventDefault(); // Prevenir el comportamiento por defecto del enlace
+
+                var id = $(this).data('id'); // Obtener el id del producto desde el atributo data-id
+
+                if (confirm('¿Estás seguro de eliminar este producto?')) {
+                    $.ajax({
+                        url: '/Productos/Eliminar', // Ruta al método Eliminar en el controlador
+                        type: 'POST',
+                        data: { id: id }, // Enviar el id del producto como datos
+                        success: function (result) {
+                            // Opcional: manejar cualquier acción después de la eliminación
+                            // Por ejemplo, actualizar la lista de productos sin recargar la página
+                            location.reload(); // Recargar la página para actualizar la lista (opcional)
+                        },
+                        error: function (xhr, status, error) {
+                            // Manejar errores si es necesario
+                            console.error(error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
